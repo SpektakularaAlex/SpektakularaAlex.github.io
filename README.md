@@ -1,69 +1,90 @@
-# My_website
+# Personal website
 
-Personal academic website of Alexander Cremer. Built with React and Vite, deployed as static
-files to GitHub Pages. No analytics or trackers.
+Source of <https://spektakularaalex.github.io/>. Plain HTML, CSS and JavaScript: no build step,
+no dependencies, no trackers. GitHub Pages serves these files directly.
 
-## Run locally
+> **`/ionsource/` must keep its URL.** The QR code on the printed poster points there. Never rename
+> or move the `ionsource/` folder.
 
-Needs [Node.js](https://nodejs.org) 22.12 or newer.
-
-```sh
-npm install        # first time only
-npm run dev        # http://localhost:5173, updates as you save
-```
-
-To test the real production build:
+## Preview
 
 ```sh
-npm run build      # writes dist/
-npm run preview    # http://localhost:4173
+python3 -m http.server 8000
 ```
 
-## Files
+Open <http://localhost:8000>. Opening the files directly does not work, because links start with `/`.
 
-| File | Purpose |
+## Pages
+
+| URL | File |
 | --- | --- |
-| `src/content.jsx` | **All text on the site.** Instructions are at the top. |
-| `src/App.jsx` | Layout and components. |
-| `src/style.css` | All styling. Colours are the variables near the top. |
-| `src/fonts/` | Self-hosted Source Serif 4 (SIL Open Font License). |
-| `index.html` | Title, SEO and link-preview metadata. |
-| `public/` | Copied as is: `cv.pdf`, photo, favicon, `404.html`, `robots.txt`, `sitemap.xml`. |
-| `scripts/prerender.js` | Puts the rendered page into the built HTML, so it works without JavaScript. |
-| `.github/workflows/deploy.yml` | Builds and deploys on every push to `main`. |
+| `/` | `index.html` |
+| `/music/` | `music/index.html` |
+| `/gallery/` | `gallery/index.html` |
+| `/ionsource/` | `ionsource/index.html` (poster: `ionsource/poster.pdf`) |
+| `/cv.pdf` | `cv.pdf` |
+| any missing URL | `404.html` |
 
-## Edit
+Styles are in `assets/css/style.css` (colours at the top), scripts in `assets/js/`:
+`site.js` (email links), `gallery.js` (lightbox), `cr3bp.js` (three-body figure).
 
-- **News item or project:** copy a snippet from the top of `src/content.jsx`.
-- **CV:** overwrite `public/cv.pdf` and change `cvUpdated` in `src/content.jsx`.
-- **Photo:** start from a square image outside this folder, e.g. `~/headshot.jpg`:
+**Header and footer** are written out in every page, between `HEADER` and `FOOTER` comments. With
+five pages that is simpler than a JavaScript include: the navigation works without JavaScript,
+never flickers in, and is visible to search engines. To change it, edit it in one page and copy it
+to `index.html`, `music/`, `gallery/`, `ionsource/` and `404.html` (`aria-current="page"` marks the
+current page).
 
-  ```sh
-  sips -s format jpeg -s formatOptions 82 -z 300 300 ~/headshot.jpg --out public/photo.jpg   # macOS
-  cwebp -q 82 public/photo.jpg -o public/photo.webp
-  ```
+## Replace a placeholder image
 
-  Replace **both** files: browsers use the WebP and link previews use the JPG.
-- **Unfinished facts:** `grep -n VERIFY src/content.jsx`. The comments are left out of the built
-  page, but are readable in this repo if it is public.
+Overwrite the file in `assets/img/` with your photo, keeping the **same name and aspect ratio**, and
+update the `alt` text (remove "(placeholder)"). Keep files under about 300 KB. On macOS:
 
-## Deploy with GitHub Pages
+```sh
+sips -s format jpeg -s formatOptions 75 -Z 1500 ~/photo.jpg --out assets/img/gallery-01.jpg
+```
 
-1. On GitHub: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-   ("Deploy from a branch" does not work any more: the site has to be built first.)
-2. Commit and push to `main`, including `package-lock.json`. Progress is under the **Actions** tab.
-3. The site is at <https://spektakularaalex.github.io/My_website/>.
+If the aspect ratio differs, images in cards and grids are cropped to fit. For `portrait.jpg` and
+the music photos, also update `width` and `height` in the HTML. `portrait.jpg` is the picture in
+link previews too.
 
-### Optional: a root URL
+## Add a gallery photo
 
-To serve the site at <https://spektakularaalex.github.io/> instead:
+1. Save it as `assets/img/gallery-13.jpg` (next number).
+2. In `gallery/index.html`, copy an `<li>` line, change the number (twice), the `alt` text and the
+   caption. The lightbox picks it up automatically.
 
-1. **Settings → General → Repository name:** rename it to `SpektakularaAlex.github.io`.
-2. Update the local clone:
+The home page shows eight photos: edit the list under `§05` in `index.html`.
+
+## Add a project card
+
+In `index.html` under `§03`, copy and edit:
+
+```html
+<li>
+  <img src="/assets/img/project-NAME.jpg" width="960" height="600" loading="lazy" alt="Describe the photo">
+  <h3>Title</h3>
+  <p>One line. <a class="nb" href="https://…">Code ↗</a></p>
+</li>
+```
+
+Interest cards (`§04`), recordings (`music/`) and a contact form (`§06`) have commented-out templates.
+
+## Poster and CV
+
+Overwrite `ionsource/poster.pdf` (currently a placeholder) or `cv.pdf`.
+
+## Open facts
+
+```sh
+grep -rn "VERIFY" --include="*.html" .
+```
+
+HTML comments are public in the page source, so delete each one as you resolve it.
+
+## Deploy
+
+1. The GitHub repository must be named `SpektakularaAlex.github.io` and be public.
+   After renaming it, update your clone:
    `git remote set-url origin https://github.com/SpektakularaAlex/SpektakularaAlex.github.io.git`
-3. Replace `spektakularaalex.github.io/My_website/` with `spektakularaalex.github.io/` in
-   `index.html`, `public/sitemap.xml` and `public/robots.txt`.
-4. In `public/404.html`, change `/My_website/` to `/`.
-
-Everything else uses relative paths. Search engines only read `robots.txt` at the root of a
-domain, so it takes effect only after this rename.
+2. **Settings → Pages → Source: Deploy from a branch**, branch `main`, folder `/ (root)`.
+3. Push to `main`.
