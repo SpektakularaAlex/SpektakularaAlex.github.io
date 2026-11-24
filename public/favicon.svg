@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="AC">
+  <rect width="64" height="64" rx="10" fill="#0046a0"/>
+  <!-- "A" and "C" drawn as paths so the icon does not depend on a font -->
+  <g fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 46 L20 18 L31 46 M13.2 36 H26.8"/>
+    <path d="M55 23.5 A13.5 14.2 0 1 0 55 40.5"/>
+  </g>
+</svg>
